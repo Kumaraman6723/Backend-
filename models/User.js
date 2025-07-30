@@ -29,7 +29,6 @@
 
 // module.exports = User;
 
-
 // models/User.js
 const mongoose = require("mongoose");
 
@@ -58,6 +57,14 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true, // Add role field, required
+  },
+  verified: {
+    type: Boolean,
+    default: false, // Track if user has been verified with OTP
+  },
+  verifiedAt: {
+    type: Date,
+    default: null, // Track when user was verified
   },
 });
 

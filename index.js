@@ -9,7 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const userRoutes = require("./routes/userRoutes");
 const logRoutes = require("./routes/logRoutes"); // Import log routes
-const messageRoutes = require('./routes/messageRoutes')
+const messageRoutes = require("./routes/messageRoutes");
 
 const app = express();
 
@@ -18,7 +18,10 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://lost-and-found-frontend-delta.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -27,8 +30,13 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "production" },
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
   })
 );
 
@@ -40,15 +48,11 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-
-
-
-
 app.use("/api/auth", authRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/logs", logRoutes); // Add the log routes under /api/logs
-app.use("/api", messageRoutes)
+app.use("/api", messageRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
