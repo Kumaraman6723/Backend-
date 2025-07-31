@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://lost-and-found-frontend-delta.vercel.app",
+      "https://frontend-taupe-three-48.vercel.app",
     ],
     credentials: true,
   })
